@@ -1,0 +1,47 @@
+# This tells Docker Compose which version of the compose syntax we are using
+version: '3.8'
+
+# Services are the containers we want to run
+# Each service becomes its own container
+services:
+
+  # This is our budget tracker app container
+  # We call it "app" but we could call it anything
+  app:
+
+    # Build the image using our Dockerfile in the current directory
+    # "." means look for the Dockerfile in the current folder
+    build: .
+
+    # Map port 3000 on your Mac to port 3000 inside the container
+    # Same as doing -p 3000:3000 in docker run
+    # left side = your Mac, right side = container
+    ports:
+      - "3000:3000"
+
+    # Environment variables passed into the container
+    # process.env.PORT in server.js will pick this up
+    # This is how we configure apps without hardcoding values
+    environment:
+      - PORT=3000
+      - NODE_ENV=production
+
+    # Volumes mount a folder from your Mac into the container
+    # This is how we persist the SQLite database
+    # left side  = named volume (defined below)
+    # right side = path inside the container where db file lives
+    volumes:
+      - budget-data:/app
+
+    # Restart policy — what happens if the container crashes
+    # "unless-stopped" means:
+    # always restart if it crashes
+    # but dont restart if we manually stop it
+    restart: unless-stopped
+
+# Named volumes are defined here at the bottom
+# Docker manages these volumes for you
+# They live on your Mac but Docker decides exactly where
+# This is what keeps your database safe between container restarts
+volumes:
+  budget-data:
