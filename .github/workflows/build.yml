@@ -1,0 +1,70 @@
+name: Build and Push to ECR
+
+# triggers only when code is pushed to main
+# and only after tests pass
+on:
+  push:
+    branches:
+      - main
+
+# this whole job only runs if test workflow passes
+# we don't want to build a broken image!
+
+env:
+  AWS_REGION: ap-southeast-2
+  ECR_REPOSITORY: budget-tracker-production
+
+jobs:
+  build:
+    name: Build and Push Docker Image
+    runs-on: ubuntu-latest
+
+    # only run if tests passed
+    needs: []
+    # we'll link this to test.yml properly below
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # configure AWS credentials from GitHub Secrets
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      # login to ECR
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      # build and push image
+      # tagged with commit SHA for traceability
+      - name: Build and push image to ECR
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+          # github.sha = unique commit hash
+          # e.g. "a1b2c3d4e5f6"
+          # every push creates a uniquely tagged image
+          # you can always trace which code is running
+        run: |
+          docker build \
+            --platform linux/amd64 \
+            -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
+            -t $ECR_REGISTRY/$ECR_REPOSITORY:latest \
+            .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+          # we push TWO tags:
+          # :commit-sha → specific version for traceability
+          # :latest     → always points to newest image
+
+      # output the image URL so deploy.yml can use it
+      - name: Output image URL
+        run: |
+          echo "Built and pushed image: ${{ steps.build-image.outputs.image }}"

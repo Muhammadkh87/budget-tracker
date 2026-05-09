@@ -1,0 +1,79 @@
+name: Deploy to ECS
+
+# triggers when build.yml completes successfully
+on:
+  workflow_run:
+    workflows: ["Build and Push to ECR"]
+    # must match the "name:" in build.yml exactly!
+    types:
+      - completed
+    branches:
+      - main
+
+env:
+  AWS_REGION: ap-southeast-2
+  ECR_REPOSITORY: budget-tracker-production
+  ECS_CLUSTER: budget-tracker-production-cluster
+  ECS_SERVICE: budget-tracker-production-service
+  CONTAINER_NAME: budget-tracker
+
+jobs:
+  deploy:
+    name: Deploy to ECS
+    runs-on: ubuntu-latest
+
+    # only deploy if build workflow succeeded
+    # if build failed → don't deploy broken image!
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      # download current task definition from ECS
+      - name: Download task definition
+        run: |
+          aws ecs describe-task-definition \
+            --task-definition ${{ env.CONTAINER_NAME }} \
+            --query taskDefinition \
+            --region ${{ env.AWS_REGION }} \
+            > task-definition.json
+          echo "Task definition downloaded ✅"
+
+      # update task definition to use latest image
+      - name: Update ECS task definition with new image
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          container-name: ${{ env.CONTAINER_NAME }}
+          image: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:latest
+          # we use :latest tag here
+          # which always points to the newest image
+
+      # deploy updated task definition to ECS
+      - name: Deploy to Amazon ECS
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: ${{ env.ECS_SERVICE }}
+          cluster: ${{ env.ECS_CLUSTER }}
+          wait-for-service-stability: true
+          # waits until deployment is complete
+          # pipeline fails if ECS deployment fails ✅
+
+      - name: Deployment complete
+        run: |
+          echo "✅ Successfully deployed to ECS!"
+          echo "🌐 App URL: http://budget-tracker-production-alb-12780262.ap-southeast-2.elb.amazonaws.com"

@@ -2,7 +2,7 @@
 # Stage 1 — Builder
 # ================================
 
-FROM node:20-alpine AS builder
+FROM --platform=linux/amd64 node:20-alpine AS builder
 
 WORKDIR /app
 
@@ -25,7 +25,7 @@ COPY . .
 # ================================
 
 # Also update production stage to Node 20
-FROM node:20-alpine AS production
+FROM --platform=linux/amd64 node:20-alpine AS production
 
 WORKDIR /app
 
