@@ -16,6 +16,7 @@ env:
   ECS_CLUSTER: budget-tracker-production-cluster
   ECS_SERVICE: budget-tracker-production-service
   CONTAINER_NAME: budget-tracker
+  TASK_DEFINITION: budget-tracker-production  
 
 jobs:
   deploy:
@@ -45,7 +46,7 @@ jobs:
       - name: Download task definition
         run: |
           aws ecs describe-task-definition \
-            --task-definition ${{ env.CONTAINER_NAME }} \
+            --task-definition ${{ TASK_DEFINITION }} \
             --query taskDefinition \
             --region ${{ env.AWS_REGION }} \
             > task-definition.json
