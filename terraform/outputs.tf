@@ -3,13 +3,13 @@ output "app_url" {
   value       = "http://${module.alb.alb_dns_name}"
   # after terraform apply you'll see:
   # app_url = "http://budget-tracker-production-alb-123456.ap-southeast-2.elb.amazonaws.com"
-  # paste this in your browser to see your app! 
+
 }
 
 output "ecr_repository_url" {
   description = "ECR repository URL for pushing Docker images"
   value       = module.ecr.repository_url
-  # you'll need this to push your Docker image
+  # push your Docker image
   # before ECS can pull and run it
 }
 
