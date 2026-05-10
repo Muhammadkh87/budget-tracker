@@ -30,7 +30,7 @@ User → Internet Gateway → ALB → ECS Fargate → RDS PostgreSQL
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Layer | Technology |
 |---|---|
@@ -280,7 +280,7 @@ This project covers the following DevOps concepts end to end:
 ## Screenshots
 
 ### Architecture Diagram
-![Architecture Diagram](architecture-diagram.png)
+![Architecture Diagram](Architecture Diagram.png)
 
 ### Application Running on AWS
 ![Budget Tracker App](screenshot.png)
