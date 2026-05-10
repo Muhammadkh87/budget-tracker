@@ -297,7 +297,3 @@ This project covers the following DevOps concepts end to end:
 - Background: IT Support → Sysadmin → DevOps Engineer
 
 ---
-
-## License
-
-This project is open source and available under the [MIT License](LICENSE).
