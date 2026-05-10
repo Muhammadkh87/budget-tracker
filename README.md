@@ -280,7 +280,7 @@ This project covers the following DevOps concepts end to end:
 ## Screenshots
 
 ### Architecture Diagram
-![Architecture Diagram](Diagram.png)
+![Architecture Diagram](architecture-diagram.png)
 
 ### Application Running on AWS
 ![Budget Tracker App](screenshot.png)
