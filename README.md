@@ -1,23 +1,10 @@
-#  Budget Tracker — End to End DevOps Project
+# Budget Tracker — End to End DevOps Project
 
 A production grade budget tracking web application built to demonstrate a full DevOps workflow — from local development to containerisation, cloud deployment, infrastructure as code, and automated CI/CD pipelines.
 
 ---
 
-## 📸 Screenshots
-
-### Application Running on AWS
-![Budget Tracker App](Screenshot_2026-05-10_at_4_19_14_am.png)
-
-### CI/CD Pipeline — All Stages Green
-![CI/CD Pipeline](Screenshot_2026-05-10_at_4_59_44_am.png)
-
-### Architecture Diagram
-![Architecture Diagram](Architecture_Diagram.png)
-
----
-
-##  Architecture Overview
+## Architecture Overview
 
 The application follows a **3-tier architecture** deployed on AWS across two availability zones for high availability:
 
@@ -43,7 +30,7 @@ User → Internet Gateway → ALB → ECS Fargate → RDS PostgreSQL
 
 ---
 
-##  Tech Stack
+## 🛠️ Tech Stack
 
 | Layer | Technology |
 |---|---|
@@ -62,7 +49,7 @@ User → Internet Gateway → ALB → ECS Fargate → RDS PostgreSQL
 
 ---
 
-##  Project Structure
+## Project Structure
 
 ```
 budget-tracker/
@@ -193,7 +180,7 @@ rds_endpoint       = "budget-tracker-production-db.xxx.ap-southeast-2.rds.amazon
 
 ---
 
-## 🔄 CI/CD Pipeline
+## CI/CD Pipeline
 
 Three separate GitHub Actions workflows handle the full deployment pipeline:
 
@@ -230,7 +217,7 @@ AWS_REGION
 
 ---
 
-## 🔒 Security Practices
+## Security Practices
 
 - **No hardcoded credentials** — all secrets via environment variables
 - **IAM least privilege** — dedicated `devops-admin` IAM user (not root)
@@ -244,7 +231,7 @@ AWS_REGION
 
 ---
 
-## 🏷️ Resource Naming Convention
+## Resource Naming Convention
 
 All AWS resources follow a consistent naming pattern:
 
@@ -260,7 +247,7 @@ budget-tracker-production-db
 
 ---
 
-##  Future Improvements
+## Future Improvements
 
 | Improvement | Description |
 |---|---|
@@ -277,7 +264,7 @@ budget-tracker-production-db
 
 ---
 
-##  Key Learnings
+## Key Learnings
 
 This project covers the following DevOps concepts end to end:
 
@@ -290,6 +277,19 @@ This project covers the following DevOps concepts end to end:
 
 ---
 
+## Screenshots
+
+### Architecture Diagram
+![Architecture Diagram](architecture-diagram.png)
+
+### Application Running on AWS
+![Budget Tracker App](screenshot.png)
+
+### CI/CD Pipeline — All Stages Green
+![CI/CD Pipeline](screenshot2.png)
+
+---
+
 ## Author
 
 **Muhammad Khan**
@@ -298,6 +298,6 @@ This project covers the following DevOps concepts end to end:
 
 ---
 
-## 📄 License
+## License
 
 This project is open source and available under the [MIT License](LICENSE).
